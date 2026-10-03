@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<style>
+  :root{
+    --purple:#63419A; --dark:#4A2F78; --lav:#AC9AC9; --tint:#F3F0F8;
+    --grey:#636263; --ink:#221d2b; --line:#e6e1ef; --bg:#faf9fc;
+    --ok:#2e7d54; --stop:#9a2b2b; --shadow:0 2px 10px rgba(99,65,154,.09);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15px;line-height:1.5}
+  a{color:var(--purple)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px 64px}
+
+  header{background:var(--purple);color:#fff;padding:16px 0;margin-bottom:22px}
+  header .wrap{padding-bottom:0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  header img{height:34px;border-radius:6px;background:#fff;padding:2px;display:block}
+  .brandline{flex:1;min-width:190px}
+  .eyebrow{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;opacity:.85}
+  h1{font-size:19px;margin:1px 0 0;font-weight:700;letter-spacing:-.2px}
+  .who{font-size:12.5px;opacity:.9;text-align:right}
+
+  nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+  nav button{border:1px solid var(--line);background:#fff;color:var(--grey);padding:8px 18px;
+    border-radius:999px;font:inherit;font-size:14px;cursor:pointer}
+  nav button:hover{border-color:var(--lav);color:var(--dark)}
+  nav button[aria-current="true"]{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:600}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);padding:18px 20px;margin-bottom:14px}
+  .card h2{margin:0 0 4px;font-size:16px}
+  .sub{color:var(--grey);font-size:13.5px}
+  .lbl{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--grey);font-weight:700;margin-bottom:7px}
+
+  .btn{border:0;background:var(--purple);color:#fff;padding:8px 18px;border-radius:999px;
+    font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+  .btn:hover{background:var(--dark)}
+  .btn.ghost{background:#fff;color:var(--purple);border:1px solid var(--lav)}
+  .btn.ghost:hover{background:var(--tint)}
+  .btn.sm{padding:5px 13px;font-size:13px}
+  .btn.tiny{padding:3px 9px;font-size:12px}
+  .btn.danger{background:#fff;color:var(--stop);border:1px solid #e6bcbc}
+  .btn.danger:hover{background:#fdeeee}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--dark);outline-offset:2px}
+
+  input[type=text],input[type=email],input[type=date],input[type=password],select,textarea{
+    width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+  textarea{min-height:60px;resize:vertical}
+  label.f{display:block;margin-bottom:12px}
+  label.f span{display:block;font-size:12.5px;color:var(--grey);margin-bottom:4px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:0 16px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;
+    font-size:13.5px;cursor:pointer;color:var(--grey)}
+  .chip[aria-pressed="true"]{background:var(--tint);border-color:var(--purple);color:var(--dark);font-weight:600}
+
+  .bar{height:7px;background:var(--tint);border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--purple)}
+
+  .lanes{display:flex;gap:6px;flex-wrap:wrap}
+  .lane{font-size:11.5px;padding:3px 10px;border-radius:999px;background:var(--tint);color:var(--grey);white-space:nowrap}
+  .lane.done{background:#e6f2ec;color:var(--ok);font-weight:600}
+
+  table.board{width:100%;border-collapse:collapse}
+  table.board th{text-align:left;font-size:11px;letter-spacing:1.3px;text-transform:uppercase;
+    color:var(--grey);padding:0 10px 8px 0;font-weight:700;border-bottom:1px solid var(--line)}
+  table.board td{padding:12px 10px 12px 0;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle}
+  table.board tr.clickable{cursor:pointer}
+  table.board tr.clickable:hover td{background:var(--tint)}
+
+  .lanehead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:22px 0 9px}
+  .lanehead .name{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--grey);font-weight:700}
+  .lanehead .count{font-size:12px;color:var(--grey)}
+  .lanehead .count.done{color:var(--ok);font-weight:700}
+
+  .task{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:9px;background:#fff}
+  .task.done{background:var(--tint);border-color:var(--tint)}
+  .task.waiting{opacity:.6}
+  .task .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+  .task .name{font-weight:600;font-size:14.5px}
+  .task .meta{font-size:12.5px;color:var(--grey);margin-top:2px}
+  .task .instr{font-size:13px;color:var(--grey);margin-top:6px}
+  .task .acts{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .task .acts input{max-width:230px}
+
+  .status{font-size:11px;padding:3px 10px;border-radius:999px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+  .s-Open{background:#efe9f7;color:var(--dark)}
+  .s-Waiting{background:#f1f0f2;color:var(--grey)}
+  .s-Done{background:#e6f2ec;color:var(--ok)}
+  .s-NA{background:#f1f0f2;color:var(--grey)}
+
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:11px 18px;margin:14px 0 2px}
+  .facts div span{display:block;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--grey);font-weight:700}
+  .facts div b{font-weight:600;font-size:14px}
+  .empty{padding:30px 20px;text-align:center;color:var(--grey);font-size:14px}
+  .note{background:var(--tint);border-radius:10px;padding:11px 14px;font-size:13.5px;color:var(--dark);margin-bottom:14px}
+  .err{background:#fdeeee;border:1px solid #f2cfcf;color:var(--stop);border-radius:10px;padding:11px 14px;font-size:13.5px;margin-bottom:14px}
+  .hidden{display:none}
+  .spin{color:var(--grey);font-size:14px;padding:24px 0;text-align:center}
+
+  /* ---- admin ---- */
+  .arow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+  .arow:last-child{border-bottom:0}
+  .arow .grow{flex:1;min-width:0}
+  .arow .name{font-weight:600;font-size:14px}
+  .arow .meta{font-size:12.5px;color:var(--grey);margin-top:2px}
+  .arow .tools{display:flex;gap:5px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+  .arow.retired .name{text-decoration:line-through;color:var(--grey)}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--tint);color:var(--dark);font-weight:600}
+  .tag.warn{background:#fdf3e3;color:#8a5a12}
+  .editor{background:var(--tint);border-radius:12px;padding:16px 18px;margin:10px 0}
+  .checkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 18px;margin-top:6px}
+  .checkgrid label{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;padding:4px 0;cursor:pointer}
+  .checkgrid input{margin-top:3px;flex-shrink:0;width:auto}
+
+  /* ---- overview modal ---- */
+  .overlay{position:fixed;inset:0;background:rgba(34,29,43,.5);overflow:auto;padding:26px 16px;z-index:50}
+  .sheetcard{background:#fff;max-width:820px;margin:0 auto;border-radius:14px;padding:30px 34px;
+    box-shadow:0 12px 40px rgba(34,29,43,.28)}
+  .sheethead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;
+    border-bottom:2px solid var(--purple);padding-bottom:14px;margin-bottom:6px}
+  .sheethead h2{margin:0;font-size:22px;letter-spacing:-.3px}
+  .sheetsec{margin-top:22px}
+  .sheetsec > .lbl{border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:10px}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px 22px}
+  .kv div{display:flex;gap:8px;font-size:13.5px;border-bottom:1px dotted var(--line);padding-bottom:5px}
+  .kv div span{color:var(--grey);min-width:112px;flex-shrink:0}
+  .kv div b{font-weight:600}
+  .ilist{list-style:none;margin:0;padding:0}
+  .ilist li{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:13.5px;border-bottom:1px dotted var(--line)}
+  .ilist li .box{flex-shrink:0;width:15px;text-align:center;font-weight:700;color:var(--ok)}
+  .ilist li .box.open{color:var(--grey);font-weight:400}
+  .ilist li .who{color:var(--grey);font-size:12.5px;margin-left:auto;text-align:right;white-space:nowrap}
+  .ilist li .val{color:var(--dark);font-weight:600}
+  .sheetfoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--grey);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+  @media print{
+    header, .wrap{display:none !important}
+    body{background:#fff}
+    .overlay{position:static;background:none;padding:0;overflow:visible}
+    .sheetcard{box-shadow:none;max-width:none;padding:0;border-radius:0}
+    .noprint{display:none !important}
+    .sheetsec{break-inside:avoid}
+    .ilist li{break-inside:avoid}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <img id="logo" alt="">
+    <div class="brandline">
+      <div class="eyebrow">Royalton-Hartland</div>
+      <h1>Staff workflow</h1>
+    </div>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav id="nav"></nav>
+  <div id="alert"></div>
+  <div id="app"><div class="spin">Loading…</div></div>
+</div>
+
+<div id="overlay"></div>
+
+<script>
+  var STATE = { boot:null, view:'board', detail:null, admin:null, editing:null, profileEdit:null };
+  var INITIAL_RECORD = '<?= initialRecord ?>';
+
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function say(msg, isErr){
+    el('alert').innerHTML = msg ? '<div class="'+(isErr?'err':'note')+'">'+esc(msg)+'</div>' : '';
+    if (msg) window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function busy(on){ document.body.style.cursor = on ? 'progress' : ''; }
+  function fail(e){ busy(false); say(e.message, true); }
+
+  function buildNav(){
+    var tabs = [['board','Status board'],['new','New request']];
+    if (STATE.boot.isAdmin) tabs.push(['admin','Workflow admin']);
+    el('nav').innerHTML = tabs.map(function(t){
+      return '<button type="button" data-view="'+t[0]+'" aria-current="'+
+        (t[0]===STATE.view)+'">'+t[1]+'</button>'; }).join('');
+    el('nav').querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        STATE.view = b.dataset.view; STATE.detail = null; STATE.editing = null;
+        STATE.profileEdit = null; say(''); closeOverview();
+        el('nav').querySelectorAll('button').forEach(function(x){
+          x.setAttribute('aria-current', x===b ? 'true':'false'); });
+        render();
+      });
+    });
+  }
+
+  function boot(){
+    google.script.run.withSuccessHandler(function(b){
+      STATE.boot = b;
+      el('logo').src = 'https://files.smartsites.parentsquare.com/4898/img_pd_102121_mxvilf.png';
+      el('who').innerHTML = esc(b.me) + '<br>' +
+        (b.myRoles.length ? esc(b.myRoles.join(' · ')) : 'viewing only');
+      buildNav();
+      if (INITIAL_RECORD) openRecord(INITIAL_RECORD); else render();
+    }).withFailureHandler(function(e){
+      el('app').innerHTML = '<div class="card"><div class="err">'+esc(e.message)+'</div></div>';
+    }).getBootstrap();
+  }
+
+  function render(){
+    if (STATE.detail) return renderDetail();
+    if (STATE.view === 'board') return renderBoard();
+    if (STATE.view === 'new')   return renderNew();
+    if (STATE.view === 'admin') return loadAdmin();
+  }
+
+  /* ================= Status board ================= */
+  function renderBoard(){
+    var recs = STATE.boot.records.filter(function(r){ return r.status !== 'Cancelled'; });
+    if (!recs.length){
+      el('app').innerHTML = '<div class="card"><div class="empty">No one in progress. '+
+        'Start a request from the New request tab.</div></div>';
+      return;
+    }
+    var mine = recs.reduce(function(n,r){ return n + r.myOpen; }, 0);
+    var banner = STATE.boot.myRoleKeys.length
+      ? (mine ? '<div class="note">'+mine+' open '+(mine===1?'step is':'steps are')+
+          ' assigned to your office.</div>'
+        : '<div class="note">Nothing is open for your office right now.</div>')
+      : '';
+
+    var rows = recs.map(function(r){
+      return '<tr class="clickable" onclick="openOverview(\''+r.recordId+'\')">'+
+        '<td><b>'+esc(r.name)+'</b>'+
+          (r.myOpen ? ' <span class="lane" style="background:#efe9f7;color:#4A2F78;font-weight:600">'+
+            r.myOpen+' for you</span>' : '')+
+          '<div class="sub">'+esc(r.positionTitle||r.requestType)+
+          (r.buildings?' · '+esc(r.buildings):'')+'</div></td>'+
+        '<td>'+esc(r.effectiveDate||'—')+'</td>'+
+        '<td style="min-width:118px"><div class="bar"><i style="width:'+r.progress+'%"></i></div>'+
+          '<div class="sub">'+r.progress+'% · '+r.openCount+' open</div></td>'+
+        '<td><div class="lanes">'+ r.lanes.map(function(l){
+          return '<span class="lane'+(l.complete?' done':'')+'">'+esc(l.label)+' '+
+            (l.complete?'✓':l.done+'/'+l.total)+'</span>'; }).join('') +'</div></td>'+
+        '<td><button type="button" class="btn ghost sm" '+
+          'onclick="event.stopPropagation();openRecord(\''+r.recordId+'\')">Checklist</button></td>'+
+      '</tr>';
+    }).join('');
+
+    el('app').innerHTML = banner + '<div class="card">'+
+      '<div class="sub" style="margin-bottom:10px">Click a name for the full record. '+
+      'Click Checklist to close out steps.</div>'+
+      '<table class="board"><thead><tr>'+
+      '<th>Person</th><th>Effective</th><th>Overall</th><th>By office</th><th></th>'+
+      '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
+
+  /* ================= Printable overview ================= */
+  function openOverview(id){
+    busy(true);
+    google.script.run.withSuccessHandler(function(o){
+      busy(false); renderOverview(o);
+    }).withFailureHandler(fail).getOverview(id);
+  }
+
+  function closeOverview(){
+    el('overlay').innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  function kv(pairs){
+    return '<div class="kv">'+ pairs.map(function(p){
+      return '<div><span>'+esc(p[0])+'</span><b>'+esc(p[1])+'</b></div>'; }).join('') +'</div>';
+  }
+
+  function renderOverview(o){
+    var issued = o.issued.map(function(p){
+      return [p[0], p[1] ? p[1] : '— not yet assigned —']; });
+
+    var lanesHtml = o.lanes.map(function(l){
+      return '<div class="sheetsec">'+
+        '<div class="lbl">'+esc(l.label)+' — '+
+          (l.complete ? 'complete' : l.done+' of '+l.total+' done')+
+          (l.people && l.people.length ? ' · '+esc(l.people.join(', ')) : '')+'</div>'+
+        '<ul class="ilist">'+ l.tasks.map(function(t){
+          var mark = t.status === 'Done' ? '✓' : (t.status === 'N/A' ? '–' : '☐');
+          var open = t.status === 'Done' ? '' : ' open';
+          return '<li><span class="box'+open+'">'+mark+'</span>'+
+            '<span>'+esc(t.label)+
+              (t.outputValue ? ' <span class="val">'+esc(t.outputValue)+'</span>' : '')+
+              (t.notes ? '<br><span style="color:var(--grey);font-size:12.5px">'+esc(t.notes)+'</span>' : '')+
+            '</span>'+
+            '<span class="who">'+ (t.status === 'Done' || t.status === 'N/A'
+              ? esc(t.completedBy)+'<br>'+esc(t.completedAt)
+              : esc(t.status) + (t.assignedName ? '<br>'+esc(t.assignedName) : '')) +'</span></li>';
+        }).join('') +'</ul></div>';
+    }).join('');
+
+    el('overlay').innerHTML =
+      '<div class="overlay" onclick="if(event.target===this)closeOverview()">'+
+      '<div class="sheetcard">'+
+        '<div class="sheethead">'+
+          '<div><div class="lbl" style="margin-bottom:2px">Royalton-Hartland — staff record</div>'+
+            '<h2>'+esc(o.displayName)+'</h2>'+
+            '<div class="sub">'+esc(o.requestType)+' · '+esc(o.recordId)+' · '+esc(o.status)+
+              ' · '+o.progress+'% complete'+
+              (o.openCount ? ' · '+o.openCount+' still open' : '')+'</div></div>'+
+          '<div class="tools noprint" style="display:flex;gap:7px;flex-wrap:wrap">'+
+            '<button type="button" class="btn sm" onclick="window.print()">Print</button>'+
+            '<button type="button" class="btn ghost sm" onclick="closeOverview();openRecord(\''+o.recordId+'\')">Open checklist</button>'+
+            '<button type="button" class="btn ghost sm" onclick="closeOverview()">Close</button>'+
+          '</div>'+
+        '</div>'+
+
+        (o.changeSummary ? '<div class="note" style="margin-top:16px"><b>What is changing:</b> '+
+          esc(o.changeSummary)+'</div>' : '')+
+
+        '<div class="sheetsec"><div class="lbl">Issued by the district</div>'+kv(issued)+'</div>'+
+        '<div class="sheetsec"><div class="lbl">Assignment</div>'+kv(o.assignment)+'</div>'+
+        '<div class="sheetsec"><div class="lbl">Personal details</div>'+kv(o.identity)+'</div>'+
+        (o.notes ? '<div class="sheetsec"><div class="lbl">Notes</div><div style="font-size:13.5px">'+
+          esc(o.notes)+'</div></div>' : '')+
+        lanesHtml+
+
+        '<div class="sheetfoot">'+
+          '<span>Opened by '+esc(o.createdBy)+' on '+esc(o.createdAt)+'</span>'+
+          '<span>Printed by '+esc(o.printedBy)+' · '+esc(o.printedAt)+'</span>'+
+        '</div>'+
+      '</div></div>';
+    document.body.style.overflow = 'hidden';
+  }
+
+  /* ================= Record checklist ================= */
+  function openRecord(id){
+    busy(true);
+    google.script.run.withSuccessHandler(function(d){
+      busy(false); STATE.detail = d; renderDetail();
+    }).withFailureHandler(fail).getRecord(id);
+  }
+
+  function renderDetail(){
+    var r = STATE.detail.record, tasks = STATE.detail.tasks, lanes = STATE.detail.lanes;
+    if (r.flash) { say(r.flash); r.flash = ''; }
+
+    var facts = [
+      ['Employee ID', r.employeeId], ['District email', r.districtEmail],
+      ['Extension', r.phoneExtension], ['Room', r.roomNumber],
+      ['Device', r.deviceAssetTag], ['Building', r.buildings],
+      ['Position', r.positionTitle], ['Effective', r.effectiveDate],
+      ['Supervisor', r.supervisorEmail]
+    ].filter(function(f){ return f[1]; });
+
+    var unsent = Number(r.unsentCount) || 0;
+    var html = '<div class="card">'+
+      '<button type="button" class="btn ghost sm" onclick="STATE.detail=null;render()">Back to board</button> '+
+      '<button type="button" class="btn ghost sm" onclick="openOverview(\''+r.recordId+'\')">Full record</button>'+
+      '<h2 style="margin-top:12px">'+esc(r.displayName)+'</h2>'+
+      '<div class="sub">'+esc(r.requestType)+' · '+esc(r.recordId)+' · '+esc(r.status)+'</div>'+
+      '<div class="bar" style="margin-top:12px"><i style="width:'+r.progress+'%"></i></div>'+
+      '<div class="sub" style="margin-top:5px">'+r.progress+'% complete</div>'+
+      '<div class="facts">'+ facts.map(function(f){
+        return '<div><span>'+esc(f[0])+'</span><b>'+esc(f[1])+'</b></div>'; }).join('') +'</div>'+
+      (r.notes ? '<div class="sub" style="margin-top:10px"><b>Note from intake:</b> '+esc(r.notes)+'</div>' : '')+
+      '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">'+
+        '<button type="button" class="btn'+(unsent?'':' ghost')+'" '+(unsent?'':'disabled ')+
+          'onclick="sendNow()">Send an update now</button>'+
+        '<div class="sub" style="margin-top:7px">'+
+          (unsent
+            ? unsent+' '+(unsent===1?'change has':'changes have')+' happened since the last email. '+
+              'Otherwise these go out at the end of the day to all '+esc(r.recipientCount)+' parties.'
+            : 'Nothing new since the last update'+(r.lastDigestAt?' on '+esc(r.lastDigestAt):'')+'.')+
+        '</div></div></div>';
+
+    lanes.forEach(function(l){
+      var g = tasks.filter(function(t){ return t.ownerLabel === l.label; });
+      if (!g.length) return;
+      html += '<div class="lanehead"><span class="name">'+esc(l.label)+'</span>'+
+        '<span class="count'+(l.complete?' done':'')+'">'+
+          (l.complete ? 'complete' : l.done+' of '+l.total+' done')+'</span></div>'+
+        g.map(taskHtml).join('');
+    });
+
+    html += '<div class="card" style="margin-top:20px"><div class="lbl">Add a one-off step to this person only</div>'+
+      '<div class="grid">'+
+        '<label class="f"><span>What needs doing</span><input type="text" id="ct-label"></label>'+
+        '<label class="f"><span>Which office owns it</span><select id="ct-role" onchange="syncCtPerson()">'+
+          STATE.boot.roleList.map(function(x){ return '<option value="'+x.key+'">'+esc(x.label)+'</option>'; }).join('')+
+        '</select></label>'+
+        '<label class="f"><span>Anyone in particular?</span><select id="ct-person"></select></label></div>'+
+      '<button type="button" class="btn" onclick="addTask()">Add step</button>'+
+      '<div class="sub" style="margin-top:7px">To add a step for everyone in this position, use Workflow admin.</div>'+
+      '</div>';
+
+    el('app').innerHTML = html;
+    syncCtPerson();
+  }
+
+  /** Keeps the one-off step's person list in step with the office chosen. */
+  function syncCtPerson(){
+    var sel = el('ct-person'), role = el('ct-role');
+    if (!sel || !role) return;
+    var pool = (STATE.boot.people || []).filter(function(p){
+      return p.roleKeys.indexOf(role.value) > -1; });
+    sel.innerHTML = '<option value="">Whoever gets to it</option>'+
+      pool.map(function(p){ return '<option value="'+esc(p.email)+'">'+esc(p.name)+'</option>'; }).join('');
+  }
+
+  function taskHtml(t){
+    var cls = t.status === 'Done' ? 'done' : (t.status === 'Waiting' ? 'waiting' : '');
+    var sc  = 's-' + (t.status === 'N/A' ? 'NA' : t.status);
+    var h = '<div class="task '+cls+'"><div class="top"><div>'+
+        '<div class="name">'+esc(t.label)+
+          (t.assignedName ? ' <span class="tag">'+esc(t.assignedName)+'</span>' : '')+'</div>'+
+        '<div class="meta">'+
+          (t.status==='Done' ? 'closed by '+esc(t.completedBy)+' · '+esc(t.completedAt) :
+           t.status==='N/A'  ? 'marked not applicable by '+esc(t.completedBy) :
+           t.status==='Waiting' ? 'waiting on an earlier step in this office' : 'open')+
+          (t.outputValue ? ' · '+esc(t.outputField)+': <b>'+esc(t.outputValue)+'</b>' : '')+
+        '</div>'+
+        (t.instructions && t.status!=='Done' ? '<div class="instr">'+esc(t.instructions)+'</div>' : '')+
+        (t.notes ? '<div class="instr"><b>Note:</b> '+esc(t.notes)+'</div>' : '')+
+      '</div><span class="status '+sc+'">'+esc(t.status)+'</span></div>';
+
+    if (t.status === 'Open' && t.canAct !== false){
+      h += '<div class="acts">';
+      if (t.taskKey === 'TECH_WELCOME'){
+        h += '<input type="password" id="pw-'+t.taskId+'" placeholder="Temporary password" autocomplete="off">'+
+             '<button type="button" class="btn sm" onclick="sendWelcome(\''+t.taskId+'\')">Send welcome email</button>'+
+             '<span class="sub">Used to write the message. Never saved.</span>';
+      } else {
+        if (t.outputField) h += '<input type="text" id="out-'+t.taskId+'" placeholder="'+esc(t.outputField)+'">';
+        h += '<button type="button" class="btn sm" onclick="done(\''+t.taskId+'\')">Mark done</button>'+
+             '<button type="button" class="btn ghost sm" onclick="skip(\''+t.taskId+'\')">Not applicable</button>'+
+             '<button type="button" class="btn ghost sm" onclick="note(\''+t.taskId+'\')">Add note</button>';
+      }
+      h += assignSelect(t) + '</div>';
+    }
+    return h + '</div>';
+  }
+
+  /** Anyone in the owning office can be pointed at a single step. */
+  function assignSelect(t){
+    var pool = (STATE.boot.people || []).filter(function(p){
+      return p.roleKeys.indexOf(t.ownerRole) > -1; });
+    if (!pool.length) return '';
+    return '<select style="max-width:190px" onchange="assign(\''+t.taskId+'\',this.value)" '+
+      'aria-label="Who is doing this step">'+
+      '<option value="">'+esc(t.ownerLabel)+' (anyone)</option>'+
+      pool.map(function(p){
+        return '<option value="'+esc(p.email)+'"'+
+          (t.assignedTo && t.assignedTo.toLowerCase()===p.email.toLowerCase()?' selected':'')+
+          '>'+esc(p.name)+'</option>'; }).join('')+
+      '</select>';
+  }
+
+  function refresh(d){
+    busy(false); STATE.detail = d;
+    google.script.run.withSuccessHandler(function(b){ STATE.boot = b; renderDetail(); }).getBootstrap();
+  }
+  function done(id){
+    var f = el('out-'+id); busy(true);
+    google.script.run.withSuccessHandler(refresh).withFailureHandler(fail)
+      .apiCompleteTask(id, f ? f.value : '', '');
+  }
+  function skip(id){
+    var why = prompt('Why does this step not apply?');
+    if (why === null) return; busy(true);
+    google.script.run.withSuccessHandler(refresh).withFailureHandler(fail).apiSkipTask(id, why);
+  }
+  function note(id){
+    var n = prompt('Add a note — for example, what you are waiting on');
+    if (n === null) return; busy(true);
+    google.script.run.withSuccessHandler(refresh).withFailureHandler(fail).apiNote(id, n);
+  }
+  function sendWelcome(id){
+    var pw = el('pw-'+id).value;
+    if (!pw) return say('Enter the temporary password first.', true);
+    busy(true);
+    google.script.run.withSuccessHandler(function(d){ refresh(d); say('Welcome email sent.'); })
+      .withFailureHandler(fail).apiSendWelcome(id, pw);
+  }
+  function addTask(){
+    var label = el('ct-label').value;
+    if (!label) return say('Name the step first.', true);
+    var who = el('ct-person');
+    busy(true);
+    google.script.run.withSuccessHandler(refresh).withFailureHandler(fail)
+      .apiAddTask(STATE.detail.record.recordId, label, el('ct-role').value, who ? who.value : '');
+  }
+  function assign(taskId, email){
+    busy(true);
+    google.script.run.withSuccessHandler(refresh).withFailureHandler(fail)
+      .apiAssignTask(taskId, email);
+  }
+  function sendNow(){
+    busy(true); say('');
+    google.script.run.withSuccessHandler(refresh).withFailureHandler(fail)
+      .apiSendUpdateNow(STATE.detail.record.recordId);
+  }
+
+  /* ================= Workflow admin ================= */
+  function loadAdmin(){
+    el('app').innerHTML = '<div class="spin">Loading the workflow…</div>';
+    google.script.run.withSuccessHandler(function(a){
+      STATE.admin = a; if (a.flash) say(a.flash);
+      renderAdmin();
+    }).withFailureHandler(function(e){
+      el('app').innerHTML = '<div class="card"><div class="err">'+esc(e.message)+'</div></div>';
+    }).getAdminData();
+  }
+  function adminBack(a){
+    busy(false); STATE.admin = a; STATE.editing = null;
+    if (a.flash) say(a.flash); else say('');
+    renderAdmin();
+  }
+
+  function renderAdmin(){
+    var a = STATE.admin;
+    var html = '<div class="note">Changes here shape every <b>new</b> request. '+
+      'Records already open keep the steps they were created with, unless you backfill a profile below.</div>';
+
+    /* People */
+    html += '<div class="card"><h2>People</h2>'+
+      '<div class="sub">Tick the offices each person belongs to. They will receive the daily '+
+      'update for anyone those offices touch, and can be named on individual steps.</div>'+
+      '<div class="arow" style="border-bottom:2px solid var(--line);padding-bottom:6px">'+
+        '<div class="grow"><div class="meta"><b>Name</b></div></div>'+
+        '<div class="tools">'+ a.roles.map(function(r){
+          return '<span class="meta" style="width:78px;text-align:center;font-weight:700">'+
+            esc(r.label.replace(/^District |^Technology /,'').replace(' Admin',''))+'</span>'; }).join('')+
+        '<span style="width:76px"></span></div></div>'+
+      (a.people.length ? a.people.map(function(p){
+        return '<div class="arow'+(p.active?'':' retired')+'"><div class="grow">'+
+          '<div class="name">'+esc(p.name)+
+            (p.openTasks ? ' <span class="tag">'+p.openTasks+' open</span>' : '')+'</div>'+
+          '<div class="meta">'+esc(p.email)+(p.title?' · '+esc(p.title):'')+
+            (p.roleKeys.length ? '' : ' · <b>in no office yet</b>')+'</div>'+
+          '</div><div class="tools">'+
+          a.roles.map(function(r){
+            var on = p.roleKeys.indexOf(r.key) > -1;
+            return '<span style="width:78px;text-align:center">'+
+              '<input type="checkbox" style="width:auto" '+(on?'checked ':'')+
+              'onchange="setPersonRole(\''+esc(p.email)+'\',\''+r.key+'\',this.checked)" '+
+              'aria-label="'+esc(p.name)+' in '+esc(r.label)+'"></span>'; }).join('')+
+          '<button type="button" class="btn danger tiny" style="width:76px" '+
+            'onclick="delPerson(\''+esc(p.email)+'\',\''+esc(p.name)+'\')">Remove</button>'+
+          '</div></div>';
+      }).join('') : '<div class="empty">Nobody added yet. Start with one person per office.</div>')+
+
+      '<div class="editor" style="margin-top:14px"><div class="lbl">Add someone</div>'+
+        '<div class="grid">'+
+          '<label class="f"><span>Name</span><input type="text" id="pe-name"></label>'+
+          '<label class="f"><span>Email</span><input type="email" id="pe-email"></label>'+
+          '<label class="f"><span>Title (optional)</span><input type="text" id="pe-title"></label>'+
+        '</div>'+
+        '<div class="lbl">Offices</div><div class="checkgrid" id="pe-roles">'+
+          a.roles.map(function(r){
+            return '<label><input type="checkbox" value="'+r.key+'"><span>'+esc(r.label)+'</span></label>'; }).join('')+
+        '</div>'+
+        '<button type="button" class="btn" style="margin-top:12px" onclick="addPerson()">Add person</button>'+
+      '</div></div>';
+
+    /* Shared mailboxes */
+    html += '<div class="card"><h2>Shared mailboxes</h2>'+
+      '<div class="sub">Addresses that are not a person — a helpdesk queue, a district office inbox. '+
+      'These receive the daily update but cannot be named on a step.</div>'+
+      a.roles.map(function(r){
+        return '<div class="arow"><div class="grow">'+
+          '<div class="name">'+esc(r.label)+' <span class="tag">'+r.memberCount+
+            ' '+(r.memberCount===1?'person':'people')+'</span></div>'+
+          '<input type="text" id="role-'+r.key+'" value="'+esc(r.emails)+'" '+
+            'placeholder="optional shared address" style="margin-top:6px">'+
+          '</div><div class="tools">'+
+          '<button type="button" class="btn sm" onclick="saveRole(\''+r.key+'\')">Save</button>'+
+          '</div></div>';
+      }).join('') + '</div>';
+
+    /* Profiles */
+    html += '<div class="card"><h2>Positions and change types</h2>'+
+      '<div class="sub">Each one decides which steps appear on a request.</div>'+
+      a.profiles.map(function(p){
+        return '<div class="arow'+(p.active?'':' retired')+'"><div class="grow">'+
+          '<div class="name">'+esc(p.label)+' '+
+            '<span class="tag">'+(p.type==='POSITION'?'position':'change')+'</span> '+
+            '<span class="tag">'+p.taskCount+' steps</span>'+
+            (p.active?'':' <span class="tag warn">hidden</span>')+'</div>'+
+          '<div class="meta">'+esc(p.key)+'</div>'+
+          '</div><div class="tools">'+
+          '<button type="button" class="btn ghost sm" onclick="editProfileSteps(\''+p.key+'\')">Choose steps</button>'+
+          '<button type="button" class="btn ghost tiny" onclick="backfill(\''+p.key+'\')">Backfill open records</button>'+
+          '<button type="button" class="btn danger tiny" onclick="delProfile(\''+p.key+'\',\''+esc(p.label)+'\')">Delete</button>'+
+          '</div></div>';
+      }).join('') +
+      '<div class="editor" style="margin-top:14px"><div class="lbl">Add a position or change type</div>'+
+        '<div class="grid">'+
+          '<label class="f"><span>Name</span><input type="text" id="np-label"></label>'+
+          '<label class="f"><span>Kind</span><select id="np-type">'+
+            '<option value="POSITION">Position (new hires)</option>'+
+            '<option value="CHANGE">Change type (staff updates)</option></select></label>'+
+        '</div><button type="button" class="btn" onclick="addProfile()">Add</button></div>'+
+      '</div>';
+
+    /* Steps, grouped by office */
+    a.roles.forEach(function(role){
+      var steps = a.catalog.filter(function(c){ return c.ownerRole === role.key; });
+      html += '<div class="card"><h2>'+esc(role.label)+' steps</h2>'+
+        '<div class="sub">Order here is the order they appear on the checklist and in emails.</div>'+
+        (steps.length ? steps.map(function(c,i){ return stepRow(c, i, steps.length); }).join('')
+                      : '<div class="empty">No steps yet.</div>')+
+        '<div style="margin-top:12px">'+
+        '<button type="button" class="btn ghost sm" onclick="newStep(\''+role.key+'\')">Add a step for '+esc(role.label)+'</button>'+
+        '</div>'+
+        (STATE.editing && STATE.editing.ownerRole === role.key ? stepEditor() : '')+
+        '</div>';
+    });
+
+    el('app').innerHTML = html;
+  }
+
+  function stepRow(c, i, n){
+    var deps = c.dependsOn ? ' · waits on '+esc(c.dependsOn) : '';
+    var out  = c.outputField ? ' <span class="tag">records '+esc(c.outputField)+'</span>' : '';
+    var used = c.usedOn ? ' <span class="tag">on '+c.usedOn+' record'+(c.usedOn===1?'':'s')+'</span>' : '';
+    var owner = c.assignedName ? ' <span class="tag">'+esc(c.assignedName)+'</span>' : '';
+    return '<div class="arow'+(c.active?'':' retired')+'"><div class="grow">'+
+      '<div class="name">'+esc(c.label)+owner+out+used+
+        (c.active?'':' <span class="tag warn">retired</span>')+'</div>'+
+      '<div class="meta">'+esc(c.taskKey)+deps+
+        (c.profiles.length ? ' · in '+c.profiles.length+' profile'+(c.profiles.length===1?'':'s') : ' · in no profile yet')+
+        (c.instructions ? '<br>'+esc(c.instructions) : '')+'</div>'+
+      '</div><div class="tools">'+
+      '<button type="button" class="btn ghost tiny" '+(i===0?'disabled ':'')+
+        'onclick="moveStep(\''+c.taskKey+'\',\'up\')" aria-label="Move up">↑</button>'+
+      '<button type="button" class="btn ghost tiny" '+(i===n-1?'disabled ':'')+
+        'onclick="moveStep(\''+c.taskKey+'\',\'down\')" aria-label="Move down">↓</button>'+
+      '<button type="button" class="btn ghost sm" onclick="editStep(\''+c.taskKey+'\')">Edit</button>'+
+      (c.active
+        ? '<button type="button" class="btn danger tiny" onclick="delStep(\''+c.taskKey+'\',\''+esc(c.label)+'\')">Delete</button>'
+        : '<button type="button" class="btn ghost tiny" onclick="restoreStep(\''+c.taskKey+'\')">Restore</button>')+
+      '</div></div>';
+  }
+
+  function stepEditor(){
+    var e = STATE.editing, a = STATE.admin;
+    var siblings = a.catalog.filter(function(c){
+      return c.ownerRole === e.ownerRole && c.taskKey !== e.taskKey && c.active; });
+    var roleLabel = (a.roles.filter(function(r){ return r.key === e.ownerRole; })[0]||{}).label || e.ownerRole;
+
+    return '<div class="editor"><div class="lbl">'+(e.taskKey?'Edit step':'New step')+' — '+esc(roleLabel)+'</div>'+
+      '<label class="f"><span>What needs doing</span>'+
+        '<input type="text" id="se-label" value="'+esc(e.label||'')+'"></label>'+
+      '<label class="f"><span>Instructions shown under the step</span>'+
+        '<textarea id="se-instr">'+esc(e.instructions||'')+'</textarea></label>'+
+      '<div class="grid">'+
+        '<label class="f"><span>Does it produce a value everyone needs?</span><select id="se-output">'+
+          '<option value="">No</option>'+
+          a.recordFields.map(function(f){
+            return '<option value="'+f+'"'+(e.outputField===f?' selected':'')+'>'+f+'</option>'; }).join('')+
+        '</select></label>'+
+        '<label class="f"><span>Default owner in '+esc(roleLabel)+'</span><select id="se-owner">'+
+          '<option value="">Whoever in the office gets to it</option>'+
+          (a.people||[]).filter(function(p){ return p.active && p.roleKeys.indexOf(e.ownerRole) > -1; })
+            .map(function(p){
+              return '<option value="'+esc(p.email)+'"'+
+                (e.assignedTo && e.assignedTo.toLowerCase()===p.email.toLowerCase()?' selected':'')+
+                '>'+esc(p.name)+'</option>'; }).join('')+
+        '</select></label>'+
+        '<label class="f"><span>Wait for another '+esc(roleLabel)+' step first?</span><select id="se-dep">'+
+          '<option value="">No, it can start right away</option>'+
+          siblings.map(function(s){
+            return '<option value="'+s.taskKey+'"'+(e.dependsOn===s.taskKey?' selected':'')+'>'+
+              esc(s.label)+'</option>'; }).join('')+
+        '</select></label>'+
+      '</div>'+
+      '<div class="sub" style="margin-bottom:12px">A step can only wait on another step in the same office. '+
+        'That is what keeps the offices working in parallel.</div>'+
+      '<button type="button" class="btn" onclick="saveStep()">Save step</button> '+
+      '<button type="button" class="btn ghost" onclick="STATE.editing=null;renderAdmin()">Cancel</button>'+
+      (e.taskKey ? '' : '<div class="sub" style="margin-top:9px">After saving, use <b>Choose steps</b> '+
+        'on a position above to decide who gets it.</div>')+
+      '</div>';
+  }
+
+  function newStep(roleKey){
+    STATE.editing = { ownerRole: roleKey, label:'', instructions:'', outputField:'', dependsOn:'' };
+    renderAdmin();
+    var f = el('se-label'); if (f) f.focus();
+  }
+  function editStep(taskKey){
+    var c = STATE.admin.catalog.filter(function(x){ return x.taskKey === taskKey; })[0];
+    STATE.editing = JSON.parse(JSON.stringify(c));
+    renderAdmin();
+  }
+  function saveStep(){
+    var e = STATE.editing;
+    var payload = {
+      taskKey: e.taskKey || '',
+      label: el('se-label').value,
+      ownerRole: e.ownerRole,
+      instructions: el('se-instr').value,
+      outputField: el('se-output').value,
+      assignedTo: el('se-owner') ? el('se-owner').value : '',
+      dependsOn: el('se-dep').value,
+      sortOrder: e.sortOrder === undefined ? '' : e.sortOrder,
+      active: e.active === undefined ? true : e.active
+    };
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminSaveTask(payload);
+  }
+  function moveStep(taskKey, dir){
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminMoveTask(taskKey, dir);
+  }
+  function delStep(taskKey, label){
+    if (!confirm('Delete "'+label+'"?\n\nIf it is already on someone\'s record it will be retired instead, '+
+      'so the history stays intact.')) return;
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminDeleteTask(taskKey);
+  }
+  function restoreStep(taskKey){
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminRestoreTask(taskKey);
+  }
+
+  function editProfileSteps(profileKey){
+    var a = STATE.admin;
+    var p = a.profiles.filter(function(x){ return x.key === profileKey; })[0];
+    var byRole = {};
+    a.catalog.filter(function(c){ return c.active; }).forEach(function(c){
+      (byRole[c.ownerRole] = byRole[c.ownerRole] || []).push(c); });
+
+    var body = a.roles.map(function(r){
+      var g = byRole[r.key] || [];
+      if (!g.length) return '';
+      return '<div class="lbl" style="margin-top:16px">'+esc(r.label)+'</div><div class="checkgrid">'+
+        g.map(function(c){
+          var on = c.profiles.indexOf(profileKey) > -1;
+          return '<label><input type="checkbox" '+(on?'checked ':'')+
+            'onchange="toggleTemplate(\''+c.taskKey+'\',\''+profileKey+'\',this.checked)">'+
+            '<span>'+esc(c.label)+'</span></label>';
+        }).join('') + '</div>';
+    }).join('');
+
+    el('overlay').innerHTML = '<div class="overlay" onclick="if(event.target===this)closeOverview()">'+
+      '<div class="sheetcard">'+
+        '<div class="sheethead"><div>'+
+          '<div class="lbl" style="margin-bottom:2px">Steps included in</div>'+
+          '<h2>'+esc(p.label)+'</h2>'+
+          '<div class="sub">Ticks apply to new requests. Use Backfill to push additions onto records already open.</div>'+
+        '</div><div class="tools">'+
+          '<button type="button" class="btn sm" onclick="closeOverview();loadAdmin()">Done</button>'+
+        '</div></div>'+ body +
+      '</div></div>';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function toggleTemplate(taskKey, profileKey, on){
+    google.script.run.withSuccessHandler(function(a){ STATE.admin = a; })
+      .withFailureHandler(fail).adminSetTemplate(taskKey, profileKey, on);
+  }
+  function backfill(profileKey){
+    if (!confirm('Add any missing steps from this profile to every open record using it?')) return;
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminBackfillProfile(profileKey);
+  }
+  function addProfile(){
+    var label = el('np-label').value;
+    if (!label) return say('Name the position or change type first.', true);
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail)
+      .adminSaveProfile({ label: label, type: el('np-type').value });
+  }
+  function delProfile(key, label){
+    if (!confirm('Delete "'+label+'"?\n\nIf any record already uses it, it will be hidden from the '+
+      'new-request form instead.')) return;
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminDeleteProfile(key);
+  }
+  function addPerson(){
+    var roles = Array.prototype.slice.call(
+      document.querySelectorAll('#pe-roles input:checked')).map(function(c){ return c.value; });
+    var payload = { name: el('pe-name').value, email: el('pe-email').value,
+                    title: el('pe-title').value, roleKeys: roles };
+    if (!payload.name || !payload.email) return say('A name and an email address are required.', true);
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminSavePerson(payload);
+  }
+  function setPersonRole(email, roleKey, on){
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail)
+      .adminSetPersonRole(email, roleKey, on);
+  }
+  function delPerson(email, name){
+    if (!confirm('Remove '+name+'?\n\nAnything they have already closed keeps their name. '+
+      'Anything still open goes back to the office as a whole.')) return;
+    busy(true);
+    google.script.run.withSuccessHandler(adminBack).withFailureHandler(fail).adminDeletePerson(email);
+  }
+  function saveRole(key){
+    busy(true);
+    google.script.run.withSuccessHandler(function(a){
+      adminBack(a); say('Addresses saved.');
+    }).withFailureHandler(fail).adminSaveRoleEmails(key, el('role-'+key).value);
+  }
+
+  /* ================= New request ================= */
+  function renderNew(){
+    var pos = STATE.boot.profiles.filter(function(p){ return p.type === 'POSITION'; });
+    var chg = STATE.boot.profiles.filter(function(p){ return p.type === 'CHANGE'; });
+
+    el('app').innerHTML =
+    '<div class="card"><h2>What is this?</h2>'+
+      '<div class="chips" id="type-chips">'+
+        ['New Hire','Staff Update','Departure'].map(function(t,i){
+          return '<button type="button" class="chip" data-type="'+t+'" aria-pressed="'+(i===0)+'">'+t+'</button>'; }).join('')+
+      '</div>'+
+      '<div id="pos-block"><div class="lbl" style="margin-top:14px">Position</div>'+
+        '<div class="chips" id="pos-chips">'+ pos.map(function(p){
+          return '<button type="button" class="chip" data-key="'+p.key+'" aria-pressed="false">'+esc(p.label)+'</button>'; }).join('') +'</div>'+
+        '<div class="sub">The position decides which offices are involved and what each one owes.</div></div>'+
+      '<div id="chg-block" class="hidden"><div class="lbl" style="margin-top:14px">What is changing</div>'+
+        '<div class="chips" id="chg-chips">'+ chg.map(function(p){
+          return '<button type="button" class="chip" data-key="'+p.key+'" aria-pressed="false">'+esc(p.label)+'</button>'; }).join('') +'</div>'+
+        '<div class="sub">Pick every box that applies. Each adds its own steps.</div></div>'+
+    '</div>'+
+
+    '<div class="card"><h2>The person</h2><div class="grid">'+
+      f('legalFirst','Legal first name')+f('legalLast','Legal last name')+
+      f('preferredName','Preferred name')+f('formerName','Former name (for name changes)')+
+      f('personalEmail','Personal email','email')+f('personalPhone','Personal phone')+
+      f('address1','Street address')+f('city','City')+f('state','State')+f('zip','ZIP')+
+    '</div></div>'+
+
+    '<div class="card"><h2>The assignment</h2><div class="grid">'+
+      f('positionTitle','Position title')+f('buildings','Building(s)')+
+      f('effectiveDate','Start or effective date','date')+f('fte','FTE')+
+      f('employmentType','Employment type')+f('supervisorEmail','Supervisor email','email')+
+      f('replacingWhom','Replacing whom')+
+      '<label class="f"><span>Worked here before?</span><select id="priorEmployee">'+
+        '<option value="">Not sure</option><option>No</option><option>Yes</option></select></label>'+
+    '</div>'+
+    '<label class="f"><span>What is changing (updates only)</span><textarea id="changeSummary"></textarea></label>'+
+    '<label class="f"><span>Anything the other offices should know</span><textarea id="notes"></textarea></label>'+
+    '<button type="button" class="btn" id="submit">Open the checklist</button>'+
+    '<div class="sub" style="margin-top:9px">Leave anything you do not have yet blank. '+
+      'Everyone gets one email now, then one at the end of any day something changes.</div>'+
+    '</div>';
+
+    el('type-chips').addEventListener('click', function(e){
+      var b = e.target.closest('.chip'); if(!b) return;
+      Array.prototype.forEach.call(this.children, function(c){
+        c.setAttribute('aria-pressed', c===b?'true':'false'); });
+      var isHire = b.dataset.type === 'New Hire';
+      el('pos-block').classList.toggle('hidden', !isHire);
+      el('chg-block').classList.toggle('hidden', isHire);
+      if (b.dataset.type === 'Departure'){
+        var d = document.querySelector('#chg-chips .chip[data-key="CHG_DEPARTURE"]');
+        if (d) d.setAttribute('aria-pressed','true');
+      }
+    });
+    ['pos-chips','chg-chips'].forEach(function(id){
+      el(id).addEventListener('click', function(e){
+        var b = e.target.closest('.chip'); if(!b) return;
+        if (id === 'pos-chips') Array.prototype.forEach.call(this.children, function(c){
+          if (c !== b) c.setAttribute('aria-pressed','false'); });
+        b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      });
+    });
+    el('submit').addEventListener('click', submitNew);
+  }
+
+  function f(id, label, type){
+    return '<label class="f"><span>'+esc(label)+'</span><input type="'+(type||'text')+'" id="'+id+'"></label>';
+  }
+  function v(id){ var e = el(id); return e ? e.value.trim() : ''; }
+
+  function submitNew(){
+    var type = document.querySelector('#type-chips .chip[aria-pressed="true"]').dataset.type;
+    var src = type === 'New Hire' ? '#pos-chips' : '#chg-chips';
+    var keys = Array.prototype.slice.call(document.querySelectorAll(src+' .chip[aria-pressed="true"]'))
+      .map(function(c){ return c.dataset.key; });
+    if (!keys.length) return say(type === 'New Hire'
+      ? 'Choose the position so the checklist knows which offices are involved.'
+      : 'Choose at least one thing that is changing.', true);
+    if (!v('legalFirst') || !v('legalLast')) return say('First and last name are required.', true);
+
+    var payload = { requestType:type, profileKeys:keys };
+    ['legalFirst','legalLast','preferredName','formerName','personalEmail','personalPhone',
+     'address1','city','state','zip','positionTitle','buildings','effectiveDate','fte',
+     'employmentType','supervisorEmail','replacingWhom','priorEmployee','changeSummary','notes']
+      .forEach(function(k){ payload[k] = v(k); });
+
+    el('submit').disabled = true; busy(true);
+    google.script.run.withSuccessHandler(function(d){
+      busy(false);
+      google.script.run.withSuccessHandler(function(b){
+        STATE.boot = b; STATE.detail = d;
+        say('Checklist opened. Every office has been emailed.');
+        renderDetail();
+      }).getBootstrap();
+    }).withFailureHandler(function(e){
+      busy(false); el('submit').disabled = false; say(e.message, true);
+    }).apiCreateRecord(payload);
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeOverview();
+  });
+
+  boot();
+</script>
+</body>
+</html>
